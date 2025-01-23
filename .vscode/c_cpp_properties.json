@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Pico",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:USERPROFILE}/.pico-sdk/sdk/2.1.0/**",
+                "${env:HOME}/.pico-sdk/sdk/2.1.0/**"
+            ],
+            "forcedInclude": [
+                "${env:USERPROFILE}/.pico-sdk/sdk/2.1.0/src/common/pico_base_headers/include/pico.h",
+                "${env:HOME}/.pico-sdk/sdk/2.1.0/src/common/pico_base_headers/include/pico.h",
+                "${workspaceFolder}/build/generated/pico_base/pico/config_autogen.h"
+            ],
+            "defines": [],
+            "compilerPath": "${env:USERPROFILE}/.pico-sdk/toolchain/13_3_Rel1/bin/arm-none-eabi-gcc.exe",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-gcc-arm",
+            "windows": {
+                "compilerPath": "${env:USERPROFILE}/.pico-sdk/toolchain/13_3_Rel1/bin/arm-none-eabi-gcc.exe"
+            },
+            "linux": {
+                "compilerPath": "${env:HOME}/.pico-sdk/toolchain/13_3_Rel1/bin/arm-none-eabi-gcc"
+            }
+        }
+    ],
+    "version": 4
+}

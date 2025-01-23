@@ -1,0 +1,49 @@
+name: Build GPIO Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Pico SDK
+        uses: actions/cache@v3
+        with:
+          path: pico-sdk
+          key: ${{ runner.os }}-pico-sdk
+          restore-keys: |
+            ${{ runner.os }}-pico-sdk
+
+      - name: Set up Pico SDK
+        run: |
+          if [ ! -d pico-sdk ]; then
+            git clone -b master https://github.com/raspberrypi/pico-sdk.git
+            cd pico-sdk
+            git submodule update --init
+          fi
+        env:
+          PICO_SDK_PATH: ${{ github.workspace }}/pico-sdk
+
+      - name: Setup dependencies
+        run: |
+          sudo apt update
+          sudo apt install cmake gcc-arm-none-eabi -y
+
+      - name: Build project
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DPICO_SDK_PATH=${{ github.workspace }}/pico-sdk
+          make
+        env:
+          PICO_SDK_PATH: ${{ github.workspace }}/pico-sdk
