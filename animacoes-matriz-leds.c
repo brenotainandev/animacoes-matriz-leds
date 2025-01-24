@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/pio.h"
+#include "hardware/clocks.h"
+#include "animacoes_matriz_leds.pio.h"
 
 
 #define pino_buzzer 27
 #define pino_leds 7
+#define pixels 25
 // Configuração do teclado matricial
 char teclado[4][4] = {
     {'1', '2', '3', 'A'},
@@ -24,22 +28,41 @@ int pinos_linhas[4] = {10, 9, 8, 6};
 void inicializar_teclado(int colunas[4], int linhas[4]);
 char ler_teclado();
 
+void imprimir_binario(int num); //Função util para depuração das animações
+uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
+void animacao_1(PIO pio, uint sm, uint num_frame);
+
+
 int main() {
+    PIO pio = pio0; 
+    bool clk;
+
+    clk = set_sys_clock_khz(128000, false);
+
+    uint offset = pio_add_program(pio, &animacoes_matriz_leds_program);
+    uint sm = pio_claim_unused_sm(pio, true);
+    animacoes_matriz_leds_program_init(pio, sm, offset, pino_leds);
 
     inicializar_teclado(pinos_colunas, pinos_linhas);
     gpio_init(pino_buzzer);
     gpio_set_dir(pino_buzzer, GPIO_OUT);
-    gpio_init(pino_leds);
-    gpio_set_dir(pino_leds, GPIO_OUT);
     stdio_init_all();
+    if (clk) printf("clock definido em: %ld\n", clock_get_hz(clk_sys));
     printf("Sistema inicializado. Aguardando comandos...\n");
 
   while (true) {
+    
     char tecla = ler_teclado();
+    
     if (tecla != 0) { // Se alguma tecla foi pressionada
           printf("Tecla retornada: %c \n", tecla);
   
       switch(tecla){
+        case '1':
+            printf("Executando animacao 1!\n");
+            animacao_1(pio, sm, 5);
+            break;
+
         case 'A':
           break;
         case 'B':
@@ -86,4 +109,46 @@ char ler_teclado() {
 
     ultima_tecla = 0; // Reseta a última tecla caso nenhuma tecla esteja pressionada
     return leitura;
+}
+
+void imprimir_binario(int num) {
+ int i;
+ for (i = 31; i >= 0; i--) {
+  (num & (1 << i)) ? printf("1") : printf("0");
+ }
+ printf("\n");
+}
+
+uint32_t retorno_rgb(double b, double r, double g)
+{
+  unsigned char R, G, B;
+  R = r * 255;
+  G = g * 255;
+  B = b * 255;
+  return (G << 24) | (R << 16) | (B << 8);
+}
+
+
+void animacao_1(PIO pio, uint sm, uint num_frame){
+    double frames[num_frame][pixels][3];
+        for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            frames[j][i][0] = (i + j) % 2 == 0 ? 0.7 : 0.3;
+            frames[j][i][1] = (i + j) % 3 == 0 ? 0.0 : 0.5;
+            frames[j][i][2] = (i + j) % 5 == 0 ? 1.0 : 0.0;
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++){
+    for (int i = 0; i < 25; i++){
+        buffer[i] =  retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        //imprimir_binario(buffer[i]);
+    }
+    for (int i = 0; i < 25; i++){
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+    sleep_ms(500);
+    } 
+    
 }
