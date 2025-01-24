@@ -44,9 +44,16 @@ pico_set_program_version(animacoes-matriz-leds "0.1")
 pico_enable_stdio_uart(animacoes-matriz-leds 1)
 pico_enable_stdio_usb(animacoes-matriz-leds 1)
 
+pico_generate_pio_header(animacoes-matriz-leds ${CMAKE_CURRENT_LIST_DIR}/animacoes_matriz_leds.pio)
+
+target_sources(animacoes-matriz-leds PRIVATE animacoes-matriz-leds.c)
+
 # Add the standard library to the build
 target_link_libraries(animacoes-matriz-leds
-        pico_stdlib)
+                        pico_stdlib
+                        hardware_pio
+                        hardware_adc
+                        pico_bootrom)
 
 # Add the standard include files to the build
 target_include_directories(animacoes-matriz-leds PRIVATE
@@ -59,4 +66,3 @@ target_link_libraries(animacoes-matriz-leds
         )
 
 pico_add_extra_outputs(animacoes-matriz-leds)
-
