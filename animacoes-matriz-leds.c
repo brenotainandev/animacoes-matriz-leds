@@ -11,8 +11,9 @@ char teclado[4][4] = {
     {'7', '8', '9', 'C'},
     {'*', '0', '#', 'D'}
 };
-int pinos_colunas[4] = {3, 2, 1, 0};
-int pinos_linhas[4] = {8, 6, 5, 4};
+
+int pinos_colunas[4] = {5, 4, 3, 2};
+int pinos_linhas[4] = {10, 9, 8, 6};
 
 //Pinos disponíveis na BitDogLab
 //int pinos_colunas[4] = {16, 17, 28, 18};
