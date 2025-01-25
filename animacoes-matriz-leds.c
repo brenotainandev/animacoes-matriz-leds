@@ -5,7 +5,7 @@
 #include "animacoes_matriz_leds.pio.h"
 
 
-#define pino_buzzer 27
+#define pino_buzzer 21
 #define pino_leds 7
 #define pixels 25
 // Configuração do teclado matricial
@@ -33,7 +33,7 @@ uint32_t retorno_rgb(double b, double r, double g); //Função que converte floa
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
-
+void acionamento_buzzer(int duracao_ms);
 
 int main() {
     PIO pio = pio0; 
@@ -58,6 +58,8 @@ int main() {
     
     if (tecla != 0) { // Se alguma tecla foi pressionada
           printf("Tecla retornada: %c \n", tecla);
+          acionamento_buzzer(500);
+          sleep_ms(500);
   
       switch(tecla){
         case '1':
@@ -195,4 +197,15 @@ void desligar_leds(PIO pio, uint sm) {
     for (int i = 0; i < pixels; i++) {
         pio_sm_put_blocking(pio, sm, buffer[i]);
     }
+}
+
+void acionamento_buzzer(int duracao_ms){
+    duracao_ms /= 2;
+    for(int i=0; i < duracao_ms; i++){
+        gpio_put(pino_buzzer, 1);
+        sleep_us(500);
+        gpio_put(pino_buzzer, 0);
+        sleep_us(500);
+    }
+
 }
