@@ -34,6 +34,8 @@ void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
 void acionamento_buzzer(int duracao_ms);
+void animacao_6(PIO pio, uint sm);
+void animacao_hashtag(PIO pio, uint sm, uint num_frame);
 
 int main() {
     PIO pio = pio0; 
