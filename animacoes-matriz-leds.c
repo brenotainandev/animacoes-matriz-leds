@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
@@ -31,6 +32,7 @@ char ler_teclado();
 void imprimir_binario(int num); //Função util para depuração das animações
 uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
+void animacao_3(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
 
 
@@ -63,12 +65,16 @@ int main() {
             printf("Executando animacao 1!\n");
             animacao_1(pio, sm, 5);
             break;
+            
 
         case 'A':
             printf("Desligando todos os LEDs.\n");
             desligar_leds(pio, sm);
             break;
         case 'B':
+            printf("Executando animacao 2!\n");
+            animacao_3(pio, sm, 5);
+            break;
           break;
         default:
           printf("Nenhuma ação associada à tecla %c.\n", tecla);
@@ -142,6 +148,7 @@ void animacao_1(PIO pio, uint sm, uint num_frame){
         }
     }
 
+
     uint32_t buffer[pixels];
     for (int j = 0; j < num_frame; j++){
     for (int i = 0; i < 25; i++){
@@ -155,6 +162,29 @@ void animacao_1(PIO pio, uint sm, uint num_frame){
     } 
     
 }
+
+void animacao_3(PIO pio, uint sm, uint num_frame) {
+   double frames[num_frame][pixels][3];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           frames[j][i][0] = 1.0;   
+           frames[j][i][1] = 0.0;   
+           frames[j][i][2] = 0.0;   
+       }
+   }
+
+   uint32_t buffer[pixels];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+       }
+       for (int i = 0; i < pixels; i++) {
+           pio_sm_put_blocking(pio, sm, buffer[i]);
+       }
+       sleep_ms(200);  // Optional delay between frames
+   }
+}
+
 
 void desligar_leds(PIO pio, uint sm) {
     uint32_t buffer[pixels]; // Buffer para os 25 LEDs
