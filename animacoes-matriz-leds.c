@@ -31,6 +31,7 @@ char ler_teclado();
 void imprimir_binario(int num); //Função util para depuração das animações
 uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
+void desligar_leds(PIO pio, uint sm);
 
 
 int main() {
@@ -64,7 +65,9 @@ int main() {
             break;
 
         case 'A':
-          break;
+            printf("Desligando todos os LEDs.\n");
+            desligar_leds(pio, sm);
+            break;
         case 'B':
           break;
         default:
@@ -151,4 +154,16 @@ void animacao_1(PIO pio, uint sm, uint num_frame){
     sleep_ms(500);
     } 
     
+}
+
+void desligar_leds(PIO pio, uint sm) {
+    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
+    for (int i = 0; i < pixels; i++) {
+        buffer[i] = retorno_rgb(0.0, 0.0, 0.0); // Cor preta (desligado)
+    }
+
+    // Enviar o buffer para todos os LEDs
+    for (int i = 0; i < pixels; i++) {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
 }
