@@ -3,6 +3,8 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "animacoes_matriz_leds.pio.h"
+#include <math.h>
+#include "pico/bootrom.h"
 
 
 #define pino_buzzer 27
@@ -32,7 +34,9 @@ void imprimir_binario(int num); //Função util para depuração das animações
 uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
+void animacao_7(PIO pio, uint sm, uint num_frame);//Função do botão 7
 void desligar_leds(PIO pio, uint sm);
+void habilitar_modo_gravacao();//Função do botão *
 
 
 int main() {
@@ -64,7 +68,11 @@ int main() {
             printf("Executando animacao 1!\n");
             animacao_1(pio, sm, 5);
             break;
-            
+
+        case '7':
+            printf("Executando animacao 7!\n");
+            animacao_7(pio, sm, 5);
+            break;    
 
         case 'A':
             printf("Desligando todos os LEDs.\n");
@@ -75,6 +83,12 @@ int main() {
             animacao_3(pio, sm, 5);
             break;
           break;
+        
+        case '*':
+            printf("Reiniciando o Raspberry Pi Pico W.\n");
+            habilitar_modo_gravacao();
+            break;
+
         default:
           printf("Nenhuma ação associada à tecla %c.\n", tecla);
   }}
@@ -136,6 +150,7 @@ uint32_t retorno_rgb(double b, double r, double g)
   return (G << 24) | (R << 16) | (B << 8);
 }
 
+// funções das animações
 
 void animacao_1(PIO pio, uint sm, uint num_frame){
     double frames[num_frame][pixels][3];
@@ -184,6 +199,29 @@ void animacao_3(PIO pio, uint sm, uint num_frame) {
    }
 }
 
+//função da animação 7
+void animacao_7(PIO pio, uint sm, uint num_frame){
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            frames[j][i][0] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.1);
+            frames[j][i][1] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.2);
+            frames[j][i][2] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.3);
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++){
+        for (int i = 0; i < 25; i++){
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+            //imprimir_binario(buffer[i]);
+        }
+        for (int i = 0; i < 25; i++){
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(500);
+    } 
+}
 
 void desligar_leds(PIO pio, uint sm) {
     uint32_t buffer[pixels]; // Buffer para os 25 LEDs
@@ -195,4 +233,11 @@ void desligar_leds(PIO pio, uint sm) {
     for (int i = 0; i < pixels; i++) {
         pio_sm_put_blocking(pio, sm, buffer[i]);
     }
+}
+
+//função do botão *
+void habilitar_modo_gravacao() {
+    printf("Reiniciando e habilitando o modo de gravação via USB...\n");
+    sleep_ms(1000); // Pequeno atraso para garantir que a mensagem seja impressa
+    reset_usb_boot(0, 0); // Reinicia e entra no modo de boot USB
 }
