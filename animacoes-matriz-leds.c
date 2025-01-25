@@ -66,7 +66,11 @@ int main() {
             printf("Executando animacao 1!\n");
             animacao_1(pio, sm, 5);
             break;
-            
+
+        case '6':
+            printf("Executando animacao 6!\n");
+            animacao_6(pio, sm);
+            break;    
 
         case 'A':
             printf("Desligando todos os LEDs.\n");
@@ -77,6 +81,11 @@ int main() {
             animacao_3(pio, sm, 5);
             break;
           break;
+
+        case '#':
+            printf("Executando animacao da tecla #\n");
+            animacao_hashtag(pio, sm, 5);
+            break;
         default:
           printf("Nenhuma ação associada à tecla %c.\n", tecla);
   }}
@@ -185,6 +194,57 @@ void animacao_3(PIO pio, uint sm, uint num_frame) {
        sleep_ms(200);  // Optional delay between frames
    }
 }
+
+void animacao_6(PIO pio, uint sm) {
+    int linha = 5;
+    int coluna = 5;
+
+    // Definição das cores (100% de intensidade)
+    double cores[3][3] = {
+        {1.0, 0.0, 0.0},  // Vermelho (100%)
+        {0.0, 1.0, 0.0},  // Verde (100%)
+        {0.0, 0.0, 1.0}   // Azul (100%)
+    };
+
+    uint32_t buffer[linha * coluna];
+
+    // Preenchendo a matriz com um padrão fixo de cores
+    for (int i = 0; i < linha * coluna; i++) {
+        int cor_index = i % 3;  // Alterna entre 0, 1 e 2 (vermelho, verde, azul)
+        buffer[i] = retorno_rgb(cores[cor_index][0], cores[cor_index][1], cores[cor_index][2]);
+    }
+
+    // Enviando os dados para os LEDs
+    for (int i = 0; i < linha * coluna; i++) {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+
+    sleep_ms(500);  // Pausa para observar o padrão
+}
+
+
+void animacao_hashtag(PIO pio, uint sm, uint num_frame) {
+   double frames[num_frame][pixels][3];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           frames[j][i][0] = 0.2;   // Vermelho (20% de intensidade)
+           frames[j][i][1] = 0.2;   // Verde    (20% de intensidade)
+           frames[j][i][2] = 0.2;   // Azul     (20% de intensidade)
+       }
+   }
+
+   uint32_t buffer[pixels];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+       }
+       for (int i = 0; i < pixels; i++) {
+           pio_sm_put_blocking(pio, sm, buffer[i]);
+       }
+       sleep_ms(200);  // Delay opcional entre os frames
+   }
+}
+
 
 
 void desligar_leds(PIO pio, uint sm) {
