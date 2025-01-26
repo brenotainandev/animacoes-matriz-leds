@@ -593,14 +593,16 @@ void animacao_coracao(PIO pio, uint sm) {
 
     for (int ciclo = 0; ciclo < 10; ciclo++) {
         uint32_t buffer[pixels];
+        
+        // Prepara o buffer para o coração piscando
         for (int i = 0; i < 5; i++) { // Itera pelas linhas
             for (int j = 0; j < 5; j++) { // Itera pelas colunas
                 int index = (4 - i) * 5 + j; // Inverte a ordem das linhas
                 if (frame[index] == 1) {
                     if (ciclo % 2 == 0) {
-                        buffer[i * 5 + j] = retorno_rgb(0.0, 1.0, 0.0); // Vermelho
+                        buffer[i * 5 + j] = retorno_rgb(0.0, 1.0, 0.0); // Vermelho intenso
                     } else {
-                        buffer[i * 5 + j] = retorno_rgb(0.0, 0.5, 0.0); // Vermelho com menor intensidade
+                        buffer[i * 5 + j] = retorno_rgb(0.0, 0.5, 0.0); // Vermelho fraco
                     }
                 } else {
                     buffer[i * 5 + j] = retorno_rgb(0.0, 0.0, 0.0); // Apagado
@@ -613,9 +615,18 @@ void animacao_coracao(PIO pio, uint sm) {
             pio_sm_put_blocking(pio, sm, buffer[i]);
         }
 
-        sleep_ms(300); // Pausa entre os frames
+        // Adiciona o efeito de batimento cardíaco no buzzer
+        // Primeiro "tum"
+        acionamento_buzzer(150); // Batida longa (150ms)
+        sleep_ms(150);          // Pausa curta (150ms)
+        // Segundo "tum"
+        acionamento_buzzer(100); // Batida curta (100ms)
+
+        // Sincronizar com o piscar do coração
+        sleep_ms(600); // Intervalo maior antes do próximo ciclo
     }
 
-    // Desliga os LEDs ao final
+    // Desliga os LEDs e o buzzer ao final
     desligar_leds(pio, sm);
+    gpio_put(pino_buzzer, 0); // Garante que o buzzer está desligado
 }
