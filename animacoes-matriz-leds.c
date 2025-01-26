@@ -29,6 +29,8 @@ void imprimir_binario(int num);                     // Função util para depura
 uint32_t retorno_rgb(double b, double r, double g); // Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
+void animacao_6(PIO pio, uint sm);
+void animacao_hashtag(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
 void acionamento_buzzer(int duracao_ms);
 
