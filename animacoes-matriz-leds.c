@@ -7,7 +7,7 @@
 #include "pico/bootrom.h"
 
 
-#define pino_buzzer 27
+#define pino_buzzer 21
 #define pino_leds 7
 #define pixels 25
 // Configuração do teclado matricial
@@ -34,9 +34,12 @@ void imprimir_binario(int num); //Função util para depuração das animações
 uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
+void animacao_6(PIO pio, uint sm);
 void animacao_7(PIO pio, uint sm, uint num_frame);//Função do botão 7
 void desligar_leds(PIO pio, uint sm);
 void habilitar_modo_gravacao();//Função do botão *
+void acionamento_buzzer(int duracao_ms);
+void animacao_hashtag(PIO pio, uint sm, uint num_frame);//Função do botão #
 
 
 int main() {
@@ -62,6 +65,8 @@ int main() {
     
     if (tecla != 0) { // Se alguma tecla foi pressionada
           printf("Tecla retornada: %c \n", tecla);
+          acionamento_buzzer(500);
+          sleep_ms(500);
   
       switch(tecla){
         case '1':
@@ -72,6 +77,10 @@ int main() {
         case '7':
             printf("Executando animacao 7!\n");
             animacao_7(pio, sm, 5);
+            
+        case '6':
+            printf("Executando animacao 6!\n");
+            animacao_6(pio, sm);
             break;    
 
         case 'A':
@@ -89,6 +98,11 @@ int main() {
             habilitar_modo_gravacao();
             break;
 
+
+        case '#':
+            printf("Executando animacao da tecla #\n");
+            animacao_hashtag(pio, sm, 5);
+            break;
         default:
           printf("Nenhuma ação associada à tecla %c.\n", tecla);
   }}
@@ -222,6 +236,57 @@ void animacao_7(PIO pio, uint sm, uint num_frame){
         sleep_ms(500);
     } 
 }
+void animacao_6(PIO pio, uint sm) {
+    int linha = 5;
+    int coluna = 5;
+
+    // Definição das cores (100% de intensidade)
+    double cores[3][3] = {
+        {1.0, 0.0, 0.0},  // Vermelho (100%)
+        {0.0, 1.0, 0.0},  // Verde (100%)
+        {0.0, 0.0, 1.0}   // Azul (100%)
+    };
+
+    uint32_t buffer[linha * coluna];
+
+    // Preenchendo a matriz com um padrão fixo de cores
+    for (int i = 0; i < linha * coluna; i++) {
+        int cor_index = i % 3;  // Alterna entre 0, 1 e 2 (vermelho, verde, azul)
+        buffer[i] = retorno_rgb(cores[cor_index][0], cores[cor_index][1], cores[cor_index][2]);
+    }
+
+    // Enviando os dados para os LEDs
+    for (int i = 0; i < linha * coluna; i++) {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+
+    sleep_ms(500);  // Pausa para observar o padrão
+}
+
+
+void animacao_hashtag(PIO pio, uint sm, uint num_frame) {
+   double frames[num_frame][pixels][3];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           frames[j][i][0] = 0.2;   // Vermelho (20% de intensidade)
+           frames[j][i][1] = 0.2;   // Verde    (20% de intensidade)
+           frames[j][i][2] = 0.2;   // Azul     (20% de intensidade)
+       }
+   }
+
+   uint32_t buffer[pixels];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+       }
+       for (int i = 0; i < pixels; i++) {
+           pio_sm_put_blocking(pio, sm, buffer[i]);
+       }
+       sleep_ms(200);  // Delay opcional entre os frames
+   }
+}
+
+
 
 void desligar_leds(PIO pio, uint sm) {
     uint32_t buffer[pixels]; // Buffer para os 25 LEDs
@@ -240,4 +305,14 @@ void habilitar_modo_gravacao() {
     printf("Reiniciando e habilitando o modo de gravação via USB...\n");
     sleep_ms(1000); // Pequeno atraso para garantir que a mensagem seja impressa
     reset_usb_boot(0, 0); // Reinicia e entra no modo de boot USB
+}
+void acionamento_buzzer(int duracao_ms){
+    duracao_ms /= 2;
+    for(int i=0; i < duracao_ms; i++){
+        gpio_put(pino_buzzer, 1);
+        sleep_us(500);
+        gpio_put(pino_buzzer, 0);
+        sleep_us(500);
+    }
+
 }
