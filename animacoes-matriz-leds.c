@@ -175,27 +175,6 @@ void animacao_1(PIO pio, uint sm, uint num_frame){
     
 }
 
-void animacao_3(PIO pio, uint sm, uint num_frame) {
-   double frames[num_frame][pixels][3];
-   for (int j = 0; j < num_frame; j++) {
-       for (int i = 0; i < pixels; i++) {
-           frames[j][i][0] = 1.0;   
-           frames[j][i][1] = 0.0;   
-           frames[j][i][2] = 0.0;   
-       }
-   }
-
-   uint32_t buffer[pixels];
-   for (int j = 0; j < num_frame; j++) {
-       for (int i = 0; i < pixels; i++) {
-           buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-       }
-       for (int i = 0; i < pixels; i++) {
-           pio_sm_put_blocking(pio, sm, buffer[i]);
-       }
-       sleep_ms(200);  // Optional delay between frames
-   }
-}
 
 void animacao_6(PIO pio, uint sm) {
     int linha = 5;
@@ -224,6 +203,27 @@ void animacao_6(PIO pio, uint sm) {
     sleep_ms(500);  // Pausa para observar o padrão
 }
 
+void animacao_3(PIO pio, uint sm, uint num_frame) {
+   double frames[num_frame][pixels][3];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           frames[j][i][0] = 1.0;   
+           frames[j][i][1] = 0.0;   
+           frames[j][i][2] = 0.0;   
+       }
+   }
+
+   uint32_t buffer[pixels];
+   for (int j = 0; j < num_frame; j++) {
+       for (int i = 0; i < pixels; i++) {
+           buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+       }
+       for (int i = 0; i < pixels; i++) {
+           pio_sm_put_blocking(pio, sm, buffer[i]);
+       }
+       sleep_ms(200);  // Optional delay between frames
+   }
+}
 
 void animacao_hashtag(PIO pio, uint sm, uint num_frame) {
    double frames[num_frame][pixels][3];
