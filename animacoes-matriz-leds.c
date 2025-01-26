@@ -576,3 +576,4 @@ void animacao_4(PIO pio, uint sm, uint num_frame) {
         sleep_ms(200); 
     }
 }
+
