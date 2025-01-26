@@ -30,6 +30,7 @@ void imprimir_binario(int num);                     // Função util para depura
 uint32_t retorno_rgb(double b, double r, double g); // Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
+void animacao_4(PIO pio, uint sm, uint num_frame);
 void animacao_6(PIO pio, uint sm);
 void animacao_B(PIO pio, uint sm, uint num_frame);
 void animacao_c(PIO pio, uint sm);
@@ -77,6 +78,10 @@ int main()
             case '3':
                 printf("Executando animacao 3!\n");
                 animacao_3(pio, sm, 5);
+                break;
+            case '4':
+                printf("Executando animacao 4!\n");
+                animacao_4(pio, sm, 5);
                 break;
             case '6':
                 printf("Executando animacao 6!\n");
@@ -362,5 +367,32 @@ void  animacao_c(PIO pio, uint sm) {
 
     for (int i = 0; i < pixels; i++) {
         pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+}
+
+void animacao_4(PIO pio, uint sm, uint num_frame) {
+    double frames[num_frame][pixels][3]; 
+
+
+    for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            frames[j][i][0] = (i + j) % 3 == 0 ? 0.1 : 0.0; 
+            frames[j][i][1] = (i + j + 1) % 3 == 0 ? 0.9 : 0.0; 
+            frames[j][i][2] = (i + j + 2) % 3 == 0 ? 0.3 : 0.0; 
+        }
+    }
+
+    uint32_t buffer[pixels]; 
+
+    for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+
+        for (int i = 0; i < pixels; i++) {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+
+        sleep_ms(200); 
     }
 }
