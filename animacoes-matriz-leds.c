@@ -30,6 +30,7 @@ uint32_t retorno_rgb(double b, double r, double g); // Função que converte flo
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
 void animacao_6(PIO pio, uint sm);
+void setup_case_d(PIO pio, uint sm);
 void animacao_hashtag(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
 void acionamento_buzzer(int duracao_ms);
@@ -82,6 +83,10 @@ int main()
                 printf("Executando animacao 2!\n");
                 animacao_3(pio, sm, 5);
                 break;
+            case 'D':
+                printf("Configurando os leds para o caso D");
+                setup_case_d(pio, sm);
+                break;
             case '#':
                 printf("Executando animacao da tecla #\n");
                 animacao_hashtag(pio, sm, 5);
@@ -92,6 +97,18 @@ int main()
         }
     }
 }
+
+// Configuração dos LEDs para o caso D
+void setup_case_d(PIO pio, uint sm)
+{
+    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
+    for (int i = 0; i < pixels; i++)
+    {
+        buffer[i] = retorno_rgb(0.0, 0.0, 0.5);  // Cor verde com intensidade de 50%
+        pio_sm_put_blocking(pio, sm, buffer[i]); // Enviar o buffer para todos os LEDs
+    }
+}
+
 // Inicializa os pinos do teclado matricial
 void inicializar_teclado(int colunas[4], int linhas[4])
 {
