@@ -15,6 +15,7 @@ char teclado[4][4] = {
     {'7', '8', '9', 'C'},
     {'*', '0', '#', 'D'}};
 
+// Pinos disponíveis no Wokwi simulator
 int pinos_colunas[4] = {5, 4, 3, 2};
 int pinos_linhas[4] = {10, 9, 8, 6};
 
@@ -38,6 +39,7 @@ void desligar_leds(PIO pio, uint sm);
 void acionamento_buzzer(int duracao_ms);
 void animacao_6(PIO pio, uint sm);
 void animacao_hashtag(PIO pio, uint sm, uint num_frame);
+void animacao_coracao(PIO pio, uint sm);
 
 int main()
 {
@@ -75,6 +77,12 @@ int main()
                 printf("Executando animacao 1!\n");
                 animacao_1(pio, sm, 5);
                 break;
+
+            case '2':
+                printf("Executando animacao do coracao!\n");
+                animacao_coracao(pio, sm);
+                break;
+
             case '3':
                 printf("Executando animacao 3!\n");
                 animacao_3(pio, sm, 5);
@@ -347,4 +355,42 @@ void acionamento_buzzer(int duracao_ms)
         gpio_put(pino_buzzer, 0);
         sleep_us(500);
     }
+}
+
+void animacao_coracao(PIO pio, uint sm) {
+    int frame[25] = {
+        0, 1, 0, 1, 0,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        0, 1, 1, 1, 0,
+        0, 0, 1, 0, 0
+    };
+
+    for (int ciclo = 0; ciclo < 10; ciclo++) {
+        uint32_t buffer[pixels];
+        for (int i = 0; i < 5; i++) { // Itera pelas linhas
+            for (int j = 0; j < 5; j++) { // Itera pelas colunas
+                int index = (4 - i) * 5 + j; // Inverte a ordem das linhas
+                if (frame[index] == 1) {
+                    if (ciclo % 2 == 0) {
+                        buffer[i * 5 + j] = retorno_rgb(0.0, 1.0, 0.0); // Vermelho
+                    } else {
+                        buffer[i * 5 + j] = retorno_rgb(0.0, 0.5, 0.0); // Vermelho com menor intensidade
+                    }
+                } else {
+                    buffer[i * 5 + j] = retorno_rgb(0.0, 0.0, 0.0); // Apagado
+                }
+            }
+        }
+
+        // Envia o frame para os LEDs
+        for (int i = 0; i < pixels; i++) {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+
+        sleep_ms(300); // Pausa entre os frames
+    }
+
+    // Desliga os LEDs ao final
+    desligar_leds(pio, sm);
 }
