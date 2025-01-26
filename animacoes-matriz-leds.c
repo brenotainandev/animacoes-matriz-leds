@@ -7,7 +7,7 @@
 #include <math.h>
 #include "pico/bootrom.h"
 
-#define pino_buzzer 27
+#define pino_buzzer 21
 #define pino_leds 7
 #define pixels 25
 // Configuração do teclado matricial
@@ -36,7 +36,6 @@ void animacao_6(PIO pio, uint sm);
 void animacao_7(PIO pio, uint sm, uint num_frame); // Função do botão 7
 void animacao_B(PIO pio, uint sm, uint num_frame);
 void setup_case_d(PIO pio, uint sm);
-void animacao_hashtag(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
 void habilitar_modo_gravacao(); // Função do botão *
 void acionamento_buzzer(int duracao_ms);
@@ -84,6 +83,7 @@ int main()
             case '6':
                 printf("Executando animacao 6!\n");
                 animacao_6(pio, sm);
+                break;
             case 'A':
                 printf("Desligando todos os LEDs.\n");
                 desligar_leds(pio, sm);
