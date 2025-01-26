@@ -32,6 +32,7 @@ void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
 void animacao_6(PIO pio, uint sm);
 void animacao_B(PIO pio, uint sm, uint num_frame);
+void animacao_c(PIO pio, uint sm);
 void setup_case_d(PIO pio, uint sm);
 void animacao_hashtag(PIO pio, uint sm, uint num_frame);
 void desligar_leds(PIO pio, uint sm);
@@ -88,6 +89,10 @@ int main()
             case 'B':
                 printf("Ligando os LEDs azuis.\n");
                 animacao_B(pio, sm, 5);
+                break;
+            case 'C':
+                printf("Ligando os LEDs vermelhos a 80 de intensidade.\n");
+                animacao_c(pio, sm);
                 break;
             case 'D':
                 printf("Configurando os leds para o caso D");
@@ -344,5 +349,18 @@ void acionamento_buzzer(int duracao_ms)
         sleep_us(500);
         gpio_put(pino_buzzer, 0);
         sleep_us(500);
+    }
+}
+
+void  animacao_c(PIO pio, uint sm) {
+    uint32_t buffer[pixels];
+    double intensidade = 0.8; 
+
+    for (int i = 0; i < pixels; i++) {
+        buffer[i] = retorno_rgb(0.0, intensidade, 0.0); 
+    }
+
+    for (int i = 0; i < pixels; i++) {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
     }
 }
