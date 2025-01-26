@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
@@ -32,6 +33,9 @@ void imprimir_binario(int num); //Função util para depuração das animações
 uint32_t retorno_rgb(double b, double r, double g); //Função que converte float em inteiro por cor
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
+void animacao_6(PIO pio, uint sm); //Tive que declarar o protótipo da função
+void animacao_B(PIO pio, uint sm, uint num_frame);
+void animacao_hashtag(PIO pio, uint sm, uint num_frame); //Tive que declarar o protótipo da função
 void desligar_leds(PIO pio, uint sm);
 void acionamento_buzzer(int duracao_ms);
 
@@ -67,6 +71,11 @@ int main() {
             animacao_1(pio, sm, 5);
             break;
 
+        case '3':
+            printf("Executando animacao 3!\n");
+            animacao_3(pio, sm, 5);
+            break;
+
         case '6':
             printf("Executando animacao 6!\n");
             animacao_6(pio, sm);
@@ -77,8 +86,8 @@ int main() {
             desligar_leds(pio, sm);
             break;
         case 'B':
-            printf("Executando animacao 2!\n");
-            animacao_3(pio, sm, 5);
+            printf("Ligando os LEDs azuis.\n");
+            animacao_B(pio, sm, 5);
             break;
           break;
 
@@ -173,6 +182,28 @@ void animacao_1(PIO pio, uint sm, uint num_frame){
     
 }
 
+void animacao_3(PIO pio, uint sm, uint num_frame) {
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            frames[j][i][0] = sin((i + j) * 0.5) * 0.5 + 0.5;
+            frames[j][i][1] = cos((i + j) * 0.5) * 0.5 + 0.5;
+            frames[j][i][2] = 0.2;
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++) {
+        for (int i = 0; i < pixels; i++) {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+        for (int i = 0; i < pixels; i++) {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(500);
+    }
+}
+
 
 void animacao_6(PIO pio, uint sm) {
     int linha = 5;
@@ -201,7 +232,7 @@ void animacao_6(PIO pio, uint sm) {
     sleep_ms(500);  // Pausa para observar o padrão
 }
 
-void animacao_3(PIO pio, uint sm, uint num_frame) {
+void animacao_B(PIO pio, uint sm, uint num_frame) {
    double frames[num_frame][pixels][3];
    for (int j = 0; j < num_frame; j++) {
        for (int i = 0; i < pixels; i++) {
@@ -219,7 +250,7 @@ void animacao_3(PIO pio, uint sm, uint num_frame) {
        for (int i = 0; i < pixels; i++) {
            pio_sm_put_blocking(pio, sm, buffer[i]);
        }
-       sleep_ms(200);  // Optional delay between frames
+       sleep_ms(200);
    }
 }
 
