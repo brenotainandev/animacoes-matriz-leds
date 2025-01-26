@@ -28,6 +28,7 @@ Este projeto foi realizado como sendo parte da Unidade 4 - Microcontroladores, c
 * João Vitor de Siqueira Santana Costa
 * Eduarda da Silva Santos
 * Breno Tainan Aguiar
+* Daniel Souza Silva
 
 ## Tecnologia Utilizada
 
