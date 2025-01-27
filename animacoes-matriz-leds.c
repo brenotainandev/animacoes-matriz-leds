@@ -291,7 +291,7 @@ void animacao_2(PIO pio, uint sm)
     }
 
     // Desliga os LEDs e o buzzer ao final
-    desligar_leds(pio, sm);
+    animacao_2(pio, sm);
     gpio_put(pino_buzzer, 0); // Garante que o buzzer está desligado
 }
 void animacao_3(PIO pio, uint sm, uint num_frame)
