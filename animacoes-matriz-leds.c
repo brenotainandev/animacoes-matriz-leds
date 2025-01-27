@@ -58,6 +58,10 @@ int main()
                 printf("Executando animacao 4!\n");
                 animacao_4(pio, sm, 5);
                 break;
+            case '5':
+                printf("Executando animacao 5!\n");
+                animacao_5(pio, sm);
+                break;
             case '6':
                 printf("Executando animacao 6!\n");
                 animacao_6(pio, sm);

@@ -10,6 +10,7 @@
 void animacao_1(PIO pio, uint sm, uint num_frame);
 void animacao_3(PIO pio, uint sm, uint num_frame);
 void animacao_4(PIO pio, uint sm, uint num_frame);
+void animacao_5(PIO pio, uint sm);
 void animacao_6(PIO pio, uint sm);
 void animacao_7(PIO pio, uint sm, uint num_frame);
 void animacao_8(PIO pio, uint sm, uint num_frame);

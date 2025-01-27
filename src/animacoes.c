@@ -129,6 +129,120 @@ void animacao_4(PIO pio, uint sm, uint num_frame) {
     }
 }
 
+/*
+Blue / Red / Blue / Red / Blue / Red
+. . . . .    . . . .    .    . . . . .   .     .
+.            .     .    .    .           .   .      . . .
+. . .        . . .      .    .           . .      .       .
+.            .     .    .    .           .   .      .   .
+. . . . .    .     .    .    . . . . .   .     .      .
+letra E ativa pins 0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 20, 21, 22, 23, 24
+letra R ativa pins 0, 4, 5, 8, 12, 13, 14, 15, 18, 21, 22, 23, 24
+letra I ativa pins 4, 5, 14, 15, 24
+letra C ativa pins 0, 1, 2, 3, 4, 5, 14, 15, 20, 21, 22, 23, 24
+letra K ativa pins 1, 4, 5, 7, 13, 14, 15, 17, 21, 24
+caractere ♥ ativa pins 2, 6, 8, 10, 12, 14, 16, 18
+*/
+void animacao_5(PIO pio, uint sm)
+{
+    int32_t sleep_time = 1000;
+    // letra E ativa pins
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if ((i >= 0 && i <= 5) || (i >= 12 && i <= 15) || (i >= 20 && i <= 24))
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.0, 0.0));
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+        }
+    }
+    sleep_ms(sleep_time); // Pausa para frame
+    // letra R ativa pins
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (i == 0 || i == 4 || i == 5 || i == 8 || (i >= 12 && i <= 15) || i == 18 || (i >= 21 && i <= 24))
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.5, 0.0));
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+        }
+    }
+    sleep_ms(sleep_time); // Pausa para frame
+    // letra I ativa pins
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (i == 4 || i == 5 || i == 14 || i == 15 || i == 24)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.0, 0.0));
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+        }
+    }
+    sleep_ms(sleep_time); // Pausa para frame
+    // letra C ativa pins
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if ((i >= 0 && i <= 5) || (i >= 14 && i <= 15) || (i >= 20 && i <= 24))
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.5, 0.0));
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+        }
+    }
+    sleep_ms(sleep_time); // Pausa para frame
+    // letra K ativa pins
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (i == 1 || i == 4 || i == 5 || i == 7 || (i >= 13 && i <= 15) || i == 17 || i == 21 || i == 24)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.0, 0.0));
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+        }
+    }
+    sleep_ms(sleep_time);                             // Pausa para frame
+    sleep_time = 450;                                 // Piscagem rápida do coração
+    for (int quantity = 1; quantity <= 5; quantity++) // Pisca o coração 5 vezes
+    {
+        // Pisca coração em vermelho
+        for (int i = 0; i < NUM_PIXELS; i++)
+        {
+            if (i != 0 && i != 4 && (i % 2 == 0) && i <= 18)
+            {
+                pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.5, 0.0));
+            }
+            else
+            {
+                pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+            }
+        }
+        sleep_ms(sleep_time); // Pausa para frame
+        // Pisca coração em azul
+        for (int i = 0; i < NUM_PIXELS; i++)
+        {
+            if (i != 0 && i != 4 && (i % 2 == 0) && i <= 18)
+            {
+                pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.0, 0.0));
+            }
+            else
+            {
+                pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0));
+            }
+        }
+        sleep_ms(sleep_time); // Pausa para frame
+    }
+}
+
 void animacao_6(PIO pio, uint sm)
 {
     int linha = 5;
