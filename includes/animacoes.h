@@ -1,8 +1,8 @@
 #ifndef ANIMACOES_H
 #define ANIMACOES_H
 
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 

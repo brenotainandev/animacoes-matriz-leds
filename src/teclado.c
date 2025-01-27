@@ -1,5 +1,4 @@
 #include "../includes/teclado.h"
-#include "pico/stdlib.h"
 
 // Configuração do teclado matricial
 char teclado[4][4] = {

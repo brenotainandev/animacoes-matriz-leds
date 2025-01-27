@@ -2,6 +2,7 @@
 #define TECLADO_H
 
 #include <stdint.h>
+#include "pico/stdlib.h"
 
 // Configuração do teclado matricial
 extern char teclado[4][4];          // Mapeamento das teclas
