@@ -1,19 +1,13 @@
 #include <stdio.h>
 #include <math.h>
-#include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "animacoes_matriz_leds.pio.h"
-#include "pico/bootrom.h"
 #include "./includes/teclado.h"
 #include "./includes/animacoes.h"
 #include "./includes/buzzer.h"
 #include "./includes/matriz-led.h"
-
-
-// Prototipação das funções
-
-void habilitar_modo_gravacao(); // Função do botão *
+#include "./includes/modo-gravacao.h"
 
 int main()
 {
@@ -105,12 +99,4 @@ int main()
             }
         }
     }
-}
-
-// função do botão *
-void habilitar_modo_gravacao()
-{
-    printf("Reiniciando e habilitando o modo de gravação via USB...\n");
-    sleep_ms(1000);       // Pequeno atraso para garantir que a mensagem seja impressa
-    reset_usb_boot(0, 0); // Reinicia e entra no modo de boot USB
 }

@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(animacoes-matriz-leds animacoes-matriz-leds.c src/teclado.c src/matriz-led.c src/buzzer.c src/animacoes.c)
+add_executable(animacoes-matriz-leds animacoes-matriz-leds.c src/teclado.c src/matriz-led.c src/buzzer.c src/animacoes.c src/modo-gravacao.c)
 
 pico_set_program_name(animacoes-matriz-leds "animacoes-matriz-leds")
 pico_set_program_version(animacoes-matriz-leds "0.1")
