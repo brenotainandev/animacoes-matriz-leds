@@ -26,25 +26,24 @@ int pinos_linhas[4] = {10, 9, 8, 6};
 // int pinos_linhas[4] = {19, 20, 9, 8};
 
 // Prototipação das funções
-void inicializar_teclado(int colunas[4], int linhas[4]);
-char ler_teclado();
-
-void imprimir_binario(int num);                     // Função util para depuração das animações
-uint32_t retorno_rgb(double b, double r, double g); // Função que converte float em inteiro por cor
-void animacao_1(PIO pio, uint sm, uint num_frame);
-void animacao_3(PIO pio, uint sm, uint num_frame);
-void animacao_4(PIO pio, uint sm, uint num_frame);
-void animacao_6(PIO pio, uint sm);
-void animacao_7(PIO pio, uint sm, uint num_frame); // Função do botão 7
-void animacao_8(PIO pio, uint sm, uint num_frame);
-void animacao_B(PIO pio, uint sm, uint num_frame);
-void animacao_c(PIO pio, uint sm);
-void setup_case_d(PIO pio, uint sm);
-void desligar_leds(PIO pio, uint sm);
-void habilitar_modo_gravacao(); // Função do botão *
-void acionamento_buzzer(int duracao_ms);
+char ler_teclado();                                      // Função para ler o teclado matricial
+void inicializar_teclado(int colunas[4], int linhas[4]); // Inicializa o teclado matricial
+void imprimir_binario(int num);                          // Função util para depuração das animações
+uint32_t retorno_rgb(double b, double r, double g);      // Função que converte float em inteiro por cor
+void acionamento_buzzer(int duracao_ms);                 // Função para acionar o buzzer
+void animacao_1(PIO pio, uint sm, uint num_frame);       // Função do botão 1
+void animacao_2(PIO pio, uint sm);                       // Função do botão 2
+void animacao_3(PIO pio, uint sm, uint num_frame);       // Função do botão 3
+void animacao_4(PIO pio, uint sm, uint num_frame);       // Função do botão 4
+void animacao_6(PIO pio, uint sm);                       // Função do botão 6
+void animacao_7(PIO pio, uint sm, uint num_frame);       // Função do botão 7
+void animacao_8(PIO pio, uint sm, uint num_frame);       // Função do botão 8
+void animacao_a(PIO pio, uint sm);                       // Função do botão A
+void animacao_b(PIO pio, uint sm, uint num_frame);       // Função do botão B
+void animacao_c(PIO pio, uint sm);                       // Função do botão C
+void animacao_d(PIO pio, uint sm);                       // Função do botão D
+void habilitar_modo_gravacao();                          // Função do botão *
 void animacao_hashtag(PIO pio, uint sm, uint num_frame); // Função do botão #
-void animacao_coracao(PIO pio, uint sm);
 
 int main()
 {
@@ -84,7 +83,7 @@ int main()
                 break;
             case '2':
                 printf("Executando animacao do coracao!\n");
-                animacao_coracao(pio, sm);
+                animacao_2(pio, sm);
                 break;
             case '3':
                 printf("Executando animacao 3!\n");
@@ -108,11 +107,11 @@ int main()
                 break;
             case 'A':
                 printf("Desligando todos os LEDs.\n");
-                desligar_leds(pio, sm);
+                animacao_a(pio, sm);
                 break;
             case 'B':
                 printf("Ligando os LEDs azuis.\n");
-                animacao_B(pio, sm, 5);
+                animacao_b(pio, sm, 5);
                 break;
             case 'C':
                 printf("Ligando os LEDs vermelhos a 80 de intensidade.\n");
@@ -120,7 +119,7 @@ int main()
                 break;
             case 'D':
                 printf("Configurando os leds para o caso D");
-                setup_case_d(pio, sm);
+                animacao_d(pio, sm);
                 break;
             case '*':
                 printf("Reiniciando o Raspberry Pi Pico W.\n");
@@ -136,33 +135,6 @@ int main()
         }
     }
 }
-
-// Configuração dos LEDs para o caso D
-void setup_case_d(PIO pio, uint sm)
-{
-    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
-    for (int i = 0; i < pixels; i++)
-    {
-        buffer[i] = retorno_rgb(0.0, 0.0, 0.5);  // Cor verde com intensidade de 50%
-        pio_sm_put_blocking(pio, sm, buffer[i]); // Enviar o buffer para todos os LEDs
-    }
-}
-
-// Inicializa os pinos do teclado matricial
-void inicializar_teclado(int colunas[4], int linhas[4])
-{
-    for (int i = 0; i < 4; i++)
-    {
-        gpio_init(colunas[i]);
-        gpio_set_dir(colunas[i], GPIO_IN);
-        gpio_pull_up(colunas[i]);
-        gpio_init(linhas[i]);
-        gpio_set_dir(linhas[i], GPIO_OUT);
-        gpio_put(linhas[i], 1);
-    }
-}
-
-// Lê o caractere pressionado no teclado matricial
 char ler_teclado()
 {
     static char ultima_tecla = 0; // Armazena a última tecla pressionada
@@ -196,7 +168,18 @@ char ler_teclado()
     ultima_tecla = 0; // Reseta a última tecla caso nenhuma tecla esteja pressionada
     return leitura;
 }
-
+void inicializar_teclado(int colunas[4], int linhas[4])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        gpio_init(colunas[i]);
+        gpio_set_dir(colunas[i], GPIO_IN);
+        gpio_pull_up(colunas[i]);
+        gpio_init(linhas[i]);
+        gpio_set_dir(linhas[i], GPIO_OUT);
+        gpio_put(linhas[i], 1);
+    }
+}
 void imprimir_binario(int num)
 {
     int i;
@@ -206,7 +189,6 @@ void imprimir_binario(int num)
     }
     printf("\n");
 }
-
 uint32_t retorno_rgb(double b, double r, double g)
 {
     unsigned char R, G, B;
@@ -215,7 +197,17 @@ uint32_t retorno_rgb(double b, double r, double g)
     B = b * 255;
     return (G << 24) | (R << 16) | (B << 8);
 }
-
+void acionamento_buzzer(int duracao_ms)
+{
+    duracao_ms /= 2;
+    for (int i = 0; i < duracao_ms; i++)
+    {
+        gpio_put(pino_buzzer, 1);
+        sleep_us(500);
+        gpio_put(pino_buzzer, 0);
+        sleep_us(500);
+    }
+}
 void animacao_1(PIO pio, uint sm, uint num_frame)
 {
     double frames[num_frame][pixels][3];
@@ -244,289 +236,7 @@ void animacao_1(PIO pio, uint sm, uint num_frame)
         sleep_ms(500);
     }
 }
-
-void animacao_3(PIO pio, uint sm, uint num_frame)
-{
-    double frames[num_frame][pixels][3];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            frames[j][i][0] = sin((i + j) * 0.5) * 0.5 + 0.5; // Onda
-            frames[j][i][1] = cos((i + j) * 0.5) * 0.5 + 0.5;
-            frames[j][i][2] = 0.2;
-        }
-    }
-
-    uint32_t buffer[pixels];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-        }
-        for (int i = 0; i < pixels; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-        sleep_ms(400);
-    }
-}
-
-void animacao_6(PIO pio, uint sm)
-{
-    int linha = 5;
-    int coluna = 5;
-
-    // Definição das cores (100% de intensidade)
-    double cores[3][3] = {
-        {1.0, 0.0, 0.0}, // Vermelho (100%)
-        {0.0, 1.0, 0.0}, // Verde (100%)
-        {0.0, 0.0, 1.0}  // Azul (100%)
-    };
-
-    uint32_t buffer[linha * coluna];
-
-    // Preenchendo a matriz com um padrão fixo de cores
-    for (int i = 0; i < linha * coluna; i++)
-    {
-        int cor_index = i % 3; // Alterna entre 0, 1 e 2 (vermelho, verde, azul)
-        buffer[i] = retorno_rgb(cores[cor_index][0], cores[cor_index][1], cores[cor_index][2]);
-    }
-
-    // Enviando os dados para os LEDs
-    for (int i = 0; i < linha * coluna; i++)
-    {
-        pio_sm_put_blocking(pio, sm, buffer[i]);
-    }
-
-    sleep_ms(500); // Pausa para observar o padrão
-}
-
-void animacao_8(PIO pio, uint sm, uint num_frame)
-{
-    double letras[12][pixels][3] = {
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
-
-        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}},
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}},
-
-        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
-
-        {{0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}
-
-    };
-
-    uint32_t buffer[pixels];
-
-    // Loop pelos frames para exibição
-    for (int frame = 0; frame < num_frame; frame++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            int row = i / 5; // Linha atual
-            int col = i % 5; // Coluna atual
-            buffer[i] = retorno_rgb(
-                letras[frame % 12][(4 - row) * 5 + col][0],
-                letras[frame % 12][(4 - row) * 5 + col][1],
-                letras[frame % 12][(4 - row) * 5 + col][2]);
-        }
-
-        // Envio dos dados ao PIO
-        for (int i = 0; i < pixels; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-        sleep_ms(500); // Atraso entre os frames
-    }
-}
-
-// função da animação 7
-void animacao_7(PIO pio, uint sm, uint num_frame)
-{
-    double frames[num_frame][pixels][3];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            frames[j][i][0] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.1);
-            frames[j][i][1] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.2);
-            frames[j][i][2] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.3);
-        }
-    }
-
-    uint32_t buffer[pixels];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < 25; i++)
-        {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-            // imprimir_binario(buffer[i]);
-        }
-        for (int i = 0; i < 25; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-        sleep_ms(500);
-    }
-}
-
-void animacao_B(PIO pio, uint sm, uint num_frame)
-{
-    double frames[num_frame][pixels][3];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            frames[j][i][0] = 1.0;
-            frames[j][i][1] = 0.0;
-            frames[j][i][2] = 0.0;
-        }
-    }
-
-    uint32_t buffer[pixels];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-        }
-        for (int i = 0; i < pixels; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-        sleep_ms(200);
-    }
-}
-
-void animacao_hashtag(PIO pio, uint sm, uint num_frame)
-{
-    double frames[num_frame][pixels][3];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            frames[j][i][0] = 0.2; // Vermelho (20% de intensidade)
-            frames[j][i][1] = 0.2; // Verde    (20% de intensidade)
-            frames[j][i][2] = 0.2; // Azul     (20% de intensidade)
-        }
-    }
-
-    uint32_t buffer[pixels];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-        }
-        for (int i = 0; i < pixels; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-        sleep_ms(200); // Delay opcional entre os frames
-    }
-}
-
-void desligar_leds(PIO pio, uint sm)
-{
-    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
-    for (int i = 0; i < pixels; i++)
-    {
-        buffer[i] = retorno_rgb(0.0, 0.0, 0.0); // Cor preta (desligado)
-    }
-
-    // Enviar o buffer para todos os LEDs
-    for (int i = 0; i < pixels; i++)
-    {
-        pio_sm_put_blocking(pio, sm, buffer[i]);
-    }
-}
-
-// função do botão *
-void habilitar_modo_gravacao()
-{
-    printf("Reiniciando e habilitando o modo de gravação via USB...\n");
-    sleep_ms(1000);       // Pequeno atraso para garantir que a mensagem seja impressa
-    reset_usb_boot(0, 0); // Reinicia e entra no modo de boot USB
-}
-
-void acionamento_buzzer(int duracao_ms)
-{
-    duracao_ms /= 2;
-    for (int i = 0; i < duracao_ms; i++)
-    {
-        gpio_put(pino_buzzer, 1);
-        sleep_us(500);
-        gpio_put(pino_buzzer, 0);
-        sleep_us(500);
-    }
-}
-
-void animacao_c(PIO pio, uint sm)
-{
-    uint32_t buffer[pixels];
-    double intensidade = 0.8;
-
-    for (int i = 0; i < pixels; i++)
-    {
-        buffer[i] = retorno_rgb(0.0, intensidade, 0.0);
-    }
-
-    for (int i = 0; i < pixels; i++)
-    {
-        pio_sm_put_blocking(pio, sm, buffer[i]);
-    }
-}
-
-void animacao_4(PIO pio, uint sm, uint num_frame)
-{
-    double frames[num_frame][pixels][3];
-
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            frames[j][i][0] = (i + j) % 3 == 0 ? 0.1 : 0.0;
-            frames[j][i][1] = (i + j + 1) % 3 == 0 ? 0.9 : 0.0;
-            frames[j][i][2] = (i + j + 2) % 3 == 0 ? 0.3 : 0.0;
-        }
-    }
-
-    uint32_t buffer[pixels];
-
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < pixels; i++)
-        {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
-        }
-
-        for (int i = 0; i < pixels; i++)
-        {
-            pio_sm_put_blocking(pio, sm, buffer[i]);
-        }
-
-        sleep_ms(200);
-    }
-}
-
-void animacao_coracao(PIO pio, uint sm)
+void animacao_2(PIO pio, uint sm)
 {
     int frame[25] = {
         0, 1, 0, 1, 0,
@@ -583,4 +293,270 @@ void animacao_coracao(PIO pio, uint sm)
     // Desliga os LEDs e o buzzer ao final
     desligar_leds(pio, sm);
     gpio_put(pino_buzzer, 0); // Garante que o buzzer está desligado
+}
+void animacao_3(PIO pio, uint sm, uint num_frame)
+{
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            frames[j][i][0] = sin((i + j) * 0.5) * 0.5 + 0.5; // Onda
+            frames[j][i][1] = cos((i + j) * 0.5) * 0.5 + 0.5;
+            frames[j][i][2] = 0.2;
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+        for (int i = 0; i < pixels; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(400);
+    }
+}
+void animacao_4(PIO pio, uint sm, uint num_frame)
+{
+    double frames[num_frame][pixels][3];
+
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            frames[j][i][0] = (i + j) % 3 == 0 ? 0.1 : 0.0;
+            frames[j][i][1] = (i + j + 1) % 3 == 0 ? 0.9 : 0.0;
+            frames[j][i][2] = (i + j + 2) % 3 == 0 ? 0.3 : 0.0;
+        }
+    }
+
+    uint32_t buffer[pixels];
+
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+
+        for (int i = 0; i < pixels; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+
+        sleep_ms(200);
+    }
+}
+void animacao_6(PIO pio, uint sm)
+{
+    int linha = 5;
+    int coluna = 5;
+
+    // Definição das cores (100% de intensidade)
+    double cores[3][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho (100%)
+        {0.0, 1.0, 0.0}, // Verde (100%)
+        {0.0, 0.0, 1.0}  // Azul (100%)
+    };
+
+    uint32_t buffer[linha * coluna];
+
+    // Preenchendo a matriz com um padrão fixo de cores
+    for (int i = 0; i < linha * coluna; i++)
+    {
+        int cor_index = i % 3; // Alterna entre 0, 1 e 2 (vermelho, verde, azul)
+        buffer[i] = retorno_rgb(cores[cor_index][0], cores[cor_index][1], cores[cor_index][2]);
+    }
+
+    // Enviando os dados para os LEDs
+    for (int i = 0; i < linha * coluna; i++)
+    {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+
+    sleep_ms(500); // Pausa para observar o padrão
+}
+void animacao_7(PIO pio, uint sm, uint num_frame)
+{
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            frames[j][i][0] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.1);
+            frames[j][i][1] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.2);
+            frames[j][i][2] = 0.5 + 0.5 * sin(2 * 3.1415 * i / 25 + j / 0.3);
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < 25; i++)
+        {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+            // imprimir_binario(buffer[i]);
+        }
+        for (int i = 0; i < 25; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(500);
+    }
+}
+void animacao_8(PIO pio, uint sm, uint num_frame)
+{
+    double letras[12][pixels][3] = {
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
+
+        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.4, 0.0}},
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.6, 0.0}},
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.8, 0.0}},
+
+        {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}},
+
+        {{0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}
+
+    };
+
+    uint32_t buffer[pixels];
+
+    // Loop pelos frames para exibição
+    for (int frame = 0; frame < num_frame; frame++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            int row = i / 5; // Linha atual
+            int col = i % 5; // Coluna atual
+            buffer[i] = retorno_rgb(
+                letras[frame % 12][(4 - row) * 5 + col][0],
+                letras[frame % 12][(4 - row) * 5 + col][1],
+                letras[frame % 12][(4 - row) * 5 + col][2]);
+        }
+
+        // Envio dos dados ao PIO
+        for (int i = 0; i < pixels; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(500); // Atraso entre os frames
+    }
+}
+void animacao_a(PIO pio, uint sm)
+{
+    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
+    for (int i = 0; i < pixels; i++)
+    {
+        buffer[i] = retorno_rgb(0.0, 0.0, 0.0); // Cor preta (desligado)
+    }
+
+    // Enviar o buffer para todos os LEDs
+    for (int i = 0; i < pixels; i++)
+    {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+}
+void animacao_b(PIO pio, uint sm, uint num_frame)
+{
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            frames[j][i][0] = 1.0;
+            frames[j][i][1] = 0.0;
+            frames[j][i][2] = 0.0;
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+        for (int i = 0; i < pixels; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(200);
+    }
+}
+void animacao_c(PIO pio, uint sm)
+{
+    uint32_t buffer[pixels];
+    double intensidade = 0.8;
+
+    for (int i = 0; i < pixels; i++)
+    {
+        buffer[i] = retorno_rgb(0.0, intensidade, 0.0);
+    }
+
+    for (int i = 0; i < pixels; i++)
+    {
+        pio_sm_put_blocking(pio, sm, buffer[i]);
+    }
+}
+void animacao_d(PIO pio, uint sm)
+{
+    uint32_t buffer[pixels]; // Buffer para os 25 LEDs
+    for (int i = 0; i < pixels; i++)
+    {
+        buffer[i] = retorno_rgb(0.0, 0.0, 0.5);  // Cor verde com intensidade de 50%
+        pio_sm_put_blocking(pio, sm, buffer[i]); // Enviar o buffer para todos os LEDs
+    }
+}
+void habilitar_modo_gravacao()
+{
+    printf("Reiniciando e habilitando o modo de gravação via USB...\n");
+    sleep_ms(1000);       // Pequeno atraso para garantir que a mensagem seja impressa
+    reset_usb_boot(0, 0); // Reinicia e entra no modo de boot USB
+}
+void animacao_hashtag(PIO pio, uint sm, uint num_frame)
+{
+    double frames[num_frame][pixels][3];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            frames[j][i][0] = 0.2; // Vermelho (20% de intensidade)
+            frames[j][i][1] = 0.2; // Verde    (20% de intensidade)
+            frames[j][i][2] = 0.2; // Azul     (20% de intensidade)
+        }
+    }
+
+    uint32_t buffer[pixels];
+    for (int j = 0; j < num_frame; j++)
+    {
+        for (int i = 0; i < pixels; i++)
+        {
+            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+        }
+        for (int i = 0; i < pixels; i++)
+        {
+            pio_sm_put_blocking(pio, sm, buffer[i]);
+        }
+        sleep_ms(200); // Delay opcional entre os frames
+    }
 }
