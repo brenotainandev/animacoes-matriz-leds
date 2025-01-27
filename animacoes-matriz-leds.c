@@ -231,6 +231,7 @@ void animacao_1(PIO pio, uint sm, uint num_frame)
             frames[j][i][1] = (i + j) % 3 == 0 ? 0.0 : 0.5;
             frames[j][i][2] = (i + j) % 5 == 0 ? 1.0 : 0.0;
         }
+        //Vou alterar 
     }
 
     uint32_t buffer[pixels];
