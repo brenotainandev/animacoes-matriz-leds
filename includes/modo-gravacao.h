@@ -5,7 +5,6 @@
 #include "pico/bootrom.h"
 #include "pico/stdlib.h"
 
-// Declaração da função
-void habilitar_modo_gravacao();
+void habilitar_modo_gravacao(); // Função do botão *
 
 #endif // MODO_GRAVACAO_H
