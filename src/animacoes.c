@@ -2,25 +2,57 @@
 #include "../includes/matriz-led.h"
 #include "../includes/buzzer.h"
 
-void animacao_1(PIO pio, uint sm, uint num_frame)
+void animacao_1(PIO pio, uint sm)
 {
-    double frames[num_frame][NUM_PIXELS][3];
-    for (int j = 0; j < num_frame; j++)
-    {
-        for (int i = 0; i < NUM_PIXELS; i++)
-        {
-            frames[j][i][0] = (i + j) % 2 == 0 ? 0.7 : 0.3;
-            frames[j][i][1] = (i + j) % 3 == 0 ? 0.0 : 0.5;
-            frames[j][i][2] = (i + j) % 5 == 0 ? 1.0 : 0.0;
-        }
-    }
+    uint32_t VERDE = 0x99000000; //HEXADECIMAL 60% VERDE
+    uint32_t VERMELHO = 0x00990000; //HEXADECIMAL 60% VERMELHO
+    uint32_t AZUL = 0x00009900; //HEXADECIMAL 60% AZUL 
+    uint32_t BRANCO = 0x99999900; //HEXADECIMAL 60% BRANCO
+    uint num_frame = 6;
 
+    uint32_t frame[6][25] = {{BRANCO, BRANCO,BRANCO,BRANCO,BRANCO, //SORRISO
+                            0,      0,      0,     0,     0,
+                            0,      0,      0,     0,     0,
+                            0,  VERDE,      0, VERDE,     0, //OLHO
+                            0,  VERDE,      0, VERDE,     0}, //OLHO 
+                            // SEGUNDO FRAME
+                            { 0 , BRANCO,BRANCO,BRANCO,     0, //SORRISO
+                            BRANCO,      0,      0,     0, BRANCO,
+                            0,      0,      0,     0,     0,
+                            0,  VERDE,      0, VERDE,     0, //OLHO
+                            0,  VERDE,      0, VERDE,     0},
+                            // TERCEIRO FRAME
+                            {BRANCO, BRANCO,BRANCO,BRANCO,BRANCO, //SORRISO
+                            0,      0,      0,     0,     0,
+                            0,      0,      0,     0,     0,
+                            0,  AZUL,      0, AZUL,     0, //OLHO
+                            0,  AZUL,      0, AZUL,     0}, //OLHO 
+                                // QUARTO FRAME
+                            {0, BRANCO,BRANCO,BRANCO,0, //SORRISO
+                            BRANCO,      0,      0,     0,BRANCO,
+                            0,      0,      0,     0,     0,
+                            0,  AZUL,      0, AZUL,     0, //OLHO
+                            0,  AZUL,      0, AZUL,     0}, //OLHO 
+                                // QUINTO FRAME
+                            {BRANCO, BRANCO,BRANCO,BRANCO,BRANCO, //SORRISO
+                            0,      0,      0,     0,     0,
+                            0,      0,      0,     0,     0,
+                            0,  VERMELHO,      0, VERMELHO,     0, //OLHO
+                            0,  VERMELHO,      0, VERMELHO,     0}, //OLHO 
+                                // SEXTO FRAME
+                            {0, BRANCO,BRANCO,BRANCO,0, //SORRISO
+                            BRANCO,      0,      0,     0,BRANCO,
+                            0,      0,      0,     0,     0,
+                            0,  VERMELHO,      0, VERMELHO,     0, //OLHO
+                            0,  VERMELHO,      0, VERMELHO,     0}, //OLHO 
+    };
+    
     uint32_t buffer[NUM_PIXELS];
     for (int j = 0; j < num_frame; j++)
     {
         for (int i = 0; i < 25; i++)
         {
-            buffer[i] = retorno_rgb(frames[j][i][0], frames[j][i][1], frames[j][i][2]);
+            buffer[i] = frame[j][i];
             // imprimir_binario(buffer[i]);
         }
         for (int i = 0; i < 25; i++)

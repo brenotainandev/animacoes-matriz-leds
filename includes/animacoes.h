@@ -7,7 +7,7 @@
 #include "hardware/pio.h"
 
 // Declaração das funções de animações
-void animacao_1(PIO pio, uint sm, uint num_frame);       // Função do botão 1
+void animacao_1(PIO pio, uint sm);       // Função do botão 1
 void animacao_2(PIO pio, uint sm);                       // Função do botão 2
 void animacao_3(PIO pio, uint sm, uint num_frame);       // Função do botão 3
 void animacao_4(PIO pio, uint sm, uint num_frame);       // Função do botão 4
