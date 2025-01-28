@@ -291,35 +291,117 @@ void animacao_5(PIO pio, uint sm)
         sleep_ms(sleep_time); // Pausa para frame
     }
 }
+
 void animacao_6(PIO pio, uint sm)
 {
-    int linha = 5;
-    int coluna = 5;
+    int32_t sleep_time = 1000;
 
-    // Definição das cores (100% de intensidade)
-    double cores[3][3] = {
-        {1.0, 0.0, 0.0}, // Vermelho (100%)
-        {0.0, 1.0, 0.0}, // Verde (100%)
-        {0.0, 0.0, 1.0}  // Azul (100%)
+    // Estrela vermelha
+    uint32_t estrela[25] = {
+        0, 1, 0, 1, 0,
+        1, 0, 1, 0, 1,
+        0, 1, 1, 1, 0,
+        1, 0, 1, 0, 1,
+        0, 1, 0, 1, 0
     };
-
-    uint32_t buffer[linha * coluna];
-
-    // Preenchendo a matriz com um padrão fixo de cores
-    for (int i = 0; i < linha * coluna; i++)
+    for (int i = 0; i < NUM_PIXELS; i++)
     {
-        int cor_index = i % 3; // Alterna entre 0, 1 e 2 (vermelho, verde, azul)
-        buffer[i] = retorno_rgb(cores[cor_index][0], cores[cor_index][1], cores[cor_index][2]);
+        if (estrela[i] == 1)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.0, 0.0)); // Vermelho
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0)); // Apagado
+        }
     }
+    sleep_ms(sleep_time);
 
-    // Enviando os dados para os LEDs
-    for (int i = 0; i < linha * coluna; i++)
+    // Triângulo azul
+    uint32_t triangulo[25] = {
+        0, 0, 1, 0, 0,
+        0, 1, 1, 1, 0,
+        1, 1, 1, 1, 1,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+    };
+    for (int i = 0; i < NUM_PIXELS; i++)
     {
-        pio_sm_put_blocking(pio, sm, buffer[i]);
+        if (triangulo[i] == 1)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.5)); // Azul
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0)); // Apagado
+        }
     }
+    sleep_ms(sleep_time);
 
-    sleep_ms(500); // Pausa para observar o padrão
+    // Quadrado verde
+    uint32_t quadrado[25] = {
+        0, 0, 0, 0, 0,
+        0, 1, 1, 1, 0,
+        0, 1, 1, 1, 0,
+        0, 1, 1, 1, 0,
+        0, 0, 0, 0, 0
+    };
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (quadrado[i] == 1)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.5, 0.0)); // Verde
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0)); // Apagado
+        }
+    }
+    sleep_ms(sleep_time);
+
+    // "Círculo" branco
+    uint32_t circulo[25] = {
+        0, 1, 1, 1, 0,
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        0, 1, 1, 1, 0
+    };
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (circulo[i] == 1)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.5, 0.5, 0.5)); // Branco
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0)); // Apagado
+        }
+    }
+    sleep_ms(sleep_time);
+
+    // Letra "S" azul
+    uint32_t letra_s[25] = {
+        1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0,
+        1, 1, 1, 1, 1,
+        0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1
+    };
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        if (letra_s[i] == 1)
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.5)); // Azul
+        }
+        else
+        {
+            pio_sm_put_blocking(pio, sm, retorno_rgb(0.0, 0.0, 0.0)); // Apagado
+        }
+    }
+    sleep_ms(sleep_time);
 }
+
 void animacao_7(PIO pio, uint sm, uint num_frame)
 {
     double frames[num_frame][NUM_PIXELS][3];
