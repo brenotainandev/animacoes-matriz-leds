@@ -44,7 +44,7 @@ int main()
             {
             case '1':
                 printf("Executando animacao 1!\n");
-                animacao_1(pio, sm, 5);
+                animacao_1(pio, sm);
                 break;
             case '2':
                 printf("Executando animacao do coracao!\n");
@@ -79,15 +79,15 @@ int main()
                 animacao_a(pio, sm);
                 break;
             case 'B':
-                printf("Ligando os LEDs azuis.\n");
+                printf("Ligando os LEDs azuis, 100 de intensidade.\n");
                 animacao_b(pio, sm, 5);
                 break;
             case 'C':
-                printf("Ligando os LEDs vermelhos a 80 de intensidade.\n");
+                printf("Ligando os LEDs vermelhos, 80 de intensidade.\n");
                 animacao_c(pio, sm);
                 break;
             case 'D':
-                printf("Configurando os leds para o caso D");
+                printf("Ligando os LEDs verde, 50 de intensidade. \n");
                 animacao_d(pio, sm);
                 break;
             case '*':
