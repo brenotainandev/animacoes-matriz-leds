@@ -95,7 +95,7 @@ int main()
                 habilitar_modo_gravacao();
                 break;
             case '#':
-                printf("Executando animacao da tecla #\n");
+                printf("Ligandos os LEDs na cor branca, 20 de intensidade #\n");
                 animacao_hashtag(pio, sm, 5);
                 break;
             default:

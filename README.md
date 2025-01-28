@@ -43,16 +43,26 @@ Este projeto foi realizado como sendo parte da Unidade 4 - Microcontroladores, c
 ## Funcionalidades (Simulação Wokwi)
 
 # Teclado matricial 4x4
-- As teclas *0 a 9* acionam animações distintas na matriz de LED's (feitas por diferentes integrantes do grupo).
+- As teclas *1 a 8* acionam animações distintas na matriz de LED's (feitas por diferentes integrantes do grupo):
+  - *1*: Rosto alternando entre feliz e triste - João. 
+  - *2*: Coração pulsando - Breno.
+  - *3*: Diagramação onda senoidal - Matheus. 
+  - *4*: Animação oscilatória - Rodrigo. 
+  - *5*: Exibição do nome - Erick. 
+  - *6*: Exibição estrela, triangulo, quadrado circulo - Daniel.
+  - *7*: Mudança de cor em gradiente - Eduarda. 
+  - *8*: Formação de um X - Gabriel.
+
 - Teclas especiais:
   - *A*: Desliga todos os LEDs.
   - *B: Acende todos os LEDs em **azul* com 100% de brilho.
   - *C: Acende todos os LEDs em **vermelho* com 80% de brilho.
   - *D: Acende todos os LEDs em **verde* com 50% de brilho.
   - *#: Acende todos os LEDs em **branco* com 20% de brilho.
+
 - Acionamento do Buzzer ao pressionar qualquer tecla.
 
 
 ## Vídeo de Apresentação
 
--Vídeo: *INSERIR LINK*
+-Vídeo: [YouTube](https://youtu.be/2M6z68MGXbE)
