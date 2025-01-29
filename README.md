@@ -32,7 +32,7 @@ O desenvolvimento foi realizado no **simulador Wokwi** e na **placa BitDogLab**,
 ## 📺 Demonstração
 
 - **Simulação no Wokwi:** [Assista no YouTube](https://youtu.be/2M6z68MGXbE)
-- **Execução na Placa BitDogLab:** [Assista no YouTube](https://youtu.be/2M6z68MGXbE)
+- **Execução na Placa BitDogLab:** [Assista no YouTube](https://www.youtube.com/watch?v=ihk2JGRT12I)
 
 ## 🛠 Tecnologia Utilizada
 
